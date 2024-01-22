@@ -16,7 +16,7 @@ public class AkkaExample {
         // Create and start multiple instances of ActorA with different coordinates
         for (int i = 1; i <= 3; i++) {
             Coordinates coordinatesA = new Coordinates(i * 10, i * 20);
-            ActorRef actorA = system.actorOf(Props.create(ActorA.class, coordinator, "ActorA" + i, coordinatesA), "actorA" + i);
+            ActorRef actorA = system.actorOf(Props.create(ActorA.class, coordinator, "Order" + i, coordinatesA), "Order" + i);
 
             // Send a start message to each ActorA instance
             actorA.tell("Start", ActorRef.noSender());
@@ -25,7 +25,7 @@ public class AkkaExample {
         // Create multiple instances of ActorB with different coordinates
         for (int i = 1; i <= 10; i++) {
             Coordinates coordinatesB = new Coordinates(i * 5, i * 15);
-            system.actorOf(Props.create(ActorB.class, coordinatesB), "actorB" + i);
+            system.actorOf(Props.create(ActorB.class, coordinatesB), "Courier" + i);
         }
     }
 }

@@ -21,7 +21,7 @@ class CoordinatorActor extends UntypedAbstractActor {
                 // Process all responses here
                 for (ActorInfo actorInfo : allResponses) {
                     System.out.println("Coordinator received: " +
-                            "ActorB name: " + actorInfo.getName() +
+                            "Courier name: " + actorInfo.getName() +
                             ", Price: " + actorInfo.getPrice());
                 }
                 // Clear the list for the next round of responses

@@ -15,7 +15,7 @@ public class ActorB extends UntypedAbstractActor {
     @Override
     public void preStart() {
         this.price =  new java.util.Random().nextInt(100);
-        this.name = "ActorB" + getSelf().path().name();
+        this.name = getSelf().path().name();
     }
 
     @Override

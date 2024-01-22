@@ -40,7 +40,7 @@ class ActorA extends UntypedAbstractActor {
 
             // Ask all ActorB instances for their prices and names
             for (int i = 1; i <= 10; i++) {
-                Future<Object> future = Patterns.ask(getContext().actorSelection("/user/actorB" + i), "GetInfo", new Timeout(Duration.create(5, TimeUnit.SECONDS)));
+                Future<Object> future = Patterns.ask(getContext().actorSelection("/user/Courier" + i), "GetInfo", new Timeout(Duration.create(5, TimeUnit.SECONDS)));
                 futures.add(future);
             }
 
@@ -57,10 +57,10 @@ class ActorA extends UntypedAbstractActor {
                     for (Object resp : responses) {
                         if (resp instanceof ActorInfo) {
                             ActorInfo actorInfo = (ActorInfo) resp;
-                            System.out.println(name + ": ActorB name: " + actorInfo.getName() + " Coordinates: (" + actorInfo.getCoordinates().getX() +
+                            System.out.println(name + ": Courier name: " + actorInfo.getName() + " Coordinates: (" + actorInfo.getCoordinates().getX() +
                                             ", " + actorInfo.getCoordinates().getY() + ")" +
-                                    ", ActorB price: " + actorInfo.getPrice() +
-                                    ", ActorA number: " + randomNumber + "ActorA coords: " + coordinates.getX()+":"+coordinates.getY());
+                                    ", Courier price: " + actorInfo.getPrice() +
+                                    ", Order number: " + randomNumber + "/ Order coords: " + coordinates.getX()+":"+coordinates.getY());
 
                             if (actorInfo.getPrice() >= randomNumber) {
                                 actorInfosInRange.add(actorInfo);
@@ -75,19 +75,19 @@ class ActorA extends UntypedAbstractActor {
                                 .orElse(null);
 
                         if (cheapestActor != null) {
-                            System.out.println(name + ": Cheapest ActorB: " + cheapestActor.getName() +
+                            System.out.println(name + ": Cheapest Courier: " + cheapestActor.getName() +
                                     ", Price: " + cheapestActor.getPrice() +
                                     ", Coordinates: (" + cheapestActor.getCoordinates().getX() +
                                     ", " + cheapestActor.getCoordinates().getY() + ")");
                             coordinator.tell(cheapestActor, getSelf());  // Send the chosen ActorB to the Coordinator
                         }
                     } else {
-                        System.out.println(name + ": No ActorB within the specified price range.");
+                        System.out.println(name + ": No Courier within the specified price range.");
                     }
 
-                    System.out.println(name + ": All ActorB responses received by ActorA.");
+                    System.out.println(name + ": All Courier responses received by " + name);
                 } else {
-                    System.out.println(name + ": Failed to get ActorB responses.");
+                    System.out.println(name + ": Failed to get Courier responses.");
                 }
                 return null;
             }, getContext().system().dispatcher());
