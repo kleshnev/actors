@@ -20,7 +20,7 @@ public class AkkaExample {
         for (int i = 1; i <= 2; i++) {
             Coordinates fromCoordinates = new Coordinates(i * 10, 0);
             Coordinates toCoordinates = new Coordinates((i + 1) * 10, 0);
-            ActorRef actorA = system.actorOf(Props.create(ActorA.class, coordinator, "Order" + i, fromCoordinates, toCoordinates), "Order" + i);
+            ActorRef actorA = system.actorOf(Props.create(ActorA.class, coordinator, "Order" + i, fromCoordinates, toCoordinates, i*30), "Order" + i);
 
             // Send a start message to each ActorA instance
             actorA.tell("Start", ActorRef.noSender());
@@ -29,7 +29,7 @@ public class AkkaExample {
         // Create multiple instances of ActorB with different coordinates
         for (int i = 1; i <= 3; i++) {
             Coordinates courierCoordinates = new Coordinates(i * 5, 0);
-            system.actorOf(Props.create(ActorB.class, courierCoordinates), "Courier" + i);
+            system.actorOf(Props.create(ActorB.class, courierCoordinates, i*60), "Courier" + i);
         }
     }
 }

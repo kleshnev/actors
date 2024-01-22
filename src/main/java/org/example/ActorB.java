@@ -8,14 +8,21 @@ public class ActorB extends UntypedAbstractActor {
     private String name;
     private Coordinates coordinates;
 
-    public ActorB(Coordinates coordinates) {
+    private int maxWeight;
+
+    private int weightLeft;
+
+    public ActorB(Coordinates coordinates, int maxWeight) {
         this.coordinates = coordinates;
+        this.maxWeight = maxWeight;
+        this.weightLeft = maxWeight;
     }
 
     @Override
     public void preStart() {
         this.price = new java.util.Random().nextInt(100);
         this.name = getSelf().path().name();
+        System.out.println("Cour " + name + " price " + price + " maxWeighjt" + maxWeight +" coords "+ coordinates);
     }
 
     @Override
@@ -38,8 +45,12 @@ public class ActorB extends UntypedAbstractActor {
                 int totalDistance = distanceFromTo + distanceToDestination;
 
                 System.out.println(name + ": Total Distance for  "+ request.getOrderName() + " is: " + totalDistance);
-
-                getSender().tell(new ActorInfo(name, price*totalDistance, coordinates, totalDistance), getSelf());
+                int weightWithNewOrder =  weightLeft-request.getWeight();
+                if (weightWithNewOrder>0) {
+                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, true), getSelf());
+                }else {
+                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, false), getSelf());
+                }
             } else {
                 unhandled(message);
             }

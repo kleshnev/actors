@@ -7,15 +7,20 @@ public class ActorBRequest {
     private final Coordinates orderToCoordinates;
 
     private final String orderName;
+    private final int weight;
 
-    public ActorBRequest(String command, Coordinates orderFromCoordinates, Coordinates orderToCoordinates, String orderName) {
+    public ActorBRequest(String command, Coordinates orderFromCoordinates, Coordinates orderToCoordinates, String orderName, int weight) {
         this.command = command;
         //this.courierCoordinates = courierCoordinates;
         this.orderFromCoordinates = orderFromCoordinates;
         this.orderToCoordinates = orderToCoordinates;
         this.orderName = orderName;
+        this.weight =weight;
     }
 
+    public int getWeight(){
+        return weight;
+    }
     public String getCommand() {
         return command;
     }

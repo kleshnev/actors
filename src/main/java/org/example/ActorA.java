@@ -20,18 +20,21 @@ public class ActorA extends UntypedAbstractActor {
     private final Coordinates fromCoordinates;
     private final Coordinates toCoordinates;
 
-    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates) {
+    private final int weight;
+
+    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight) {
         this.coordinator = coordinator;
         this.name = name;
         this.fromCoordinates = fromCoordinates;
         this.toCoordinates = toCoordinates;
+        this.weight = weight;
     }
 
     @Override
     public void onReceive(Object message) {
         if (message instanceof String) {
             String command = (String) message;
-            System.out.println(name + " received command: " + command);
+            System.out.println(name + " received command: " + command + "weight: " + weight);
 
             // Generate one random number for all ActorB instances
             int randomNumber = new Random().nextInt(100);
@@ -42,7 +45,7 @@ public class ActorA extends UntypedAbstractActor {
             // Ask all ActorB instances for their prices and names
             for (int i = 1; i <= 3; i++) {
                 //Coordinates courierCoordinates = new Coordinates(5,0);
-                ActorBRequest request = new ActorBRequest("GetInfo", fromCoordinates, toCoordinates , name);
+                ActorBRequest request = new ActorBRequest("GetInfo", fromCoordinates, toCoordinates , name , weight);
                 Future<Object> future = Patterns.ask(
                         getContext().actorSelection("/user/Courier" + i),
                         request,
@@ -64,30 +67,20 @@ public class ActorA extends UntypedAbstractActor {
                     for (Object resp : responses) {
                         if (resp instanceof ActorInfo) {
                             ActorInfo actorInfo = (ActorInfo) resp;
-//                            System.out.println(name + ": Courier name: " + actorInfo.getName() +
-//                                    " Coordinates: X " + actorInfo.getCoordinates().getX() +
-//                                    " Y " + actorInfo.getCoordinates().getY() +
-//                                    ", Courier price: " + actorInfo.getPrice() +
-//                                    ", Order number: " + randomNumber +
-//                                    ", Order coords: FROM X " + fromCoordinates.getX() +
-//                                    " Y " + fromCoordinates.getY() +
-//                                    " TO X " + toCoordinates.getX() +
-//                                    " Y " + toCoordinates.getY());
-//
-//                            // ...
-
-                            if (actorInfo.getPrice() >= randomNumber) {
+                            if (actorInfo.isAccept()) {
                                 actorInfosInRange.add(actorInfo);
                                 System.out.println(name + ": Courier name: " + actorInfo.getName() +
                                         " Coordinates: X " + actorInfo.getCoordinates().getX() +
                                         " Y " + actorInfo.getCoordinates().getY() +
                                         ", Courier price: " + actorInfo.getPrice() +
+                                        " OrderWEigght:" + weight +
+                                        " ,Max weight" + actorInfo.getWeight() + ": WeightLeft: " + actorInfo.weightLeft() +
                                         ", Order number: " + randomNumber +
-                                        ", Order coords: FROM X " + fromCoordinates.getX() +
-                                        " Y " + fromCoordinates.getY() +
-                                        " TO X " + toCoordinates.getX() +
-                                        " Y " + toCoordinates.getY() +
-                                        ", Distance: " + actorInfo.getDistance()); // Include the distance in the print statement
+                                        ", Order coords: FROM X:" + fromCoordinates.getX() +
+                                        " Y:" + fromCoordinates.getY() +
+                                        " TO X:" + toCoordinates.getX() +
+                                        " Y:" + toCoordinates.getY() +
+                                        " , Distance: " + actorInfo.getDistance());
                             }
                         }
                     }

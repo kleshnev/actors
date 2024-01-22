@@ -6,13 +6,30 @@ public class ActorInfo {
     private final Coordinates coordinates;
     private final int distance;
 
-    public ActorInfo(String name, int price, Coordinates coordinates, int distance) {
+    private final int maxWeight;
+    private final int weightLeft;
+
+    private boolean accept;
+
+    public ActorInfo(String name, int price, Coordinates coordinates, int distance, int maxWeight , int weightLeft , boolean accept) {
         this.name = name;
         this.price = price;
         this.coordinates = coordinates;
         this.distance = distance;
+        this.maxWeight = maxWeight;
+        this.weightLeft = weightLeft;
+        this.accept = accept;
     }
 
+    public boolean isAccept() {
+        return accept;
+    }
+
+    public int getWeight(){
+        return maxWeight;
+    }public int weightLeft(){
+        return weightLeft;
+    }
     public String getName() {
         return name;
     }
