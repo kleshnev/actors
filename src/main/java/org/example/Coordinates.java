@@ -18,3 +18,4 @@ public class Coordinates {
         return y;
     }
 }
+

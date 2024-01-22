@@ -1,5 +1,4 @@
 package org.example;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedAbstractActor;
 import akka.dispatch.Futures;
@@ -14,16 +13,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-class ActorA extends UntypedAbstractActor {
+public class ActorA extends UntypedAbstractActor {
 
     private final ActorRef coordinator;
     private final String name;
-    private final Coordinates coordinates;
+    private final Coordinates fromCoordinates;
+    private final Coordinates toCoordinates;
 
-    public ActorA(ActorRef coordinator, String name, Coordinates coordinates) {
+    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates) {
         this.coordinator = coordinator;
         this.name = name;
-        this.coordinates = coordinates;
+        this.fromCoordinates = fromCoordinates;
+        this.toCoordinates = toCoordinates;
     }
 
     @Override
@@ -39,8 +40,14 @@ class ActorA extends UntypedAbstractActor {
             List<Future<Object>> futures = new ArrayList<>();
 
             // Ask all ActorB instances for their prices and names
-            for (int i = 1; i <= 10; i++) {
-                Future<Object> future = Patterns.ask(getContext().actorSelection("/user/Courier" + i), "GetInfo", new Timeout(Duration.create(5, TimeUnit.SECONDS)));
+            for (int i = 1; i <= 1; i++) {
+                Coordinates courierCoordinates = new Coordinates(5,0);
+                ActorBRequest request = new ActorBRequest("GetInfo", courierCoordinates, fromCoordinates, toCoordinates);
+                Future<Object> future = Patterns.ask(
+                        getContext().actorSelection("/user/Courier" + i),
+                        request,
+                        new Timeout(Duration.create(5, TimeUnit.SECONDS))
+                );
                 futures.add(future);
             }
 
@@ -52,18 +59,35 @@ class ActorA extends UntypedAbstractActor {
                 if (response.isSuccess()) {
                     Iterable<Object> responses = response.get();
 
-                    // Filter ActorB instances whose prices are in range of ActorA number
+                    // Filter ActorB instances whose prices are in the range of ActorA number
                     List<ActorInfo> actorInfosInRange = new ArrayList<>();
                     for (Object resp : responses) {
                         if (resp instanceof ActorInfo) {
                             ActorInfo actorInfo = (ActorInfo) resp;
-                            System.out.println(name + ": Courier name: " + actorInfo.getName() + " Coordinates: (" + actorInfo.getCoordinates().getX() +
-                                            ", " + actorInfo.getCoordinates().getY() + ")" +
-                                    ", Courier price: " + actorInfo.getPrice() +
-                                    ", Order number: " + randomNumber + "/ Order coords: " + coordinates.getX()+":"+coordinates.getY());
+//                            System.out.println(name + ": Courier name: " + actorInfo.getName() +
+//                                    " Coordinates: X " + actorInfo.getCoordinates().getX() +
+//                                    " Y " + actorInfo.getCoordinates().getY() +
+//                                    ", Courier price: " + actorInfo.getPrice() +
+//                                    ", Order number: " + randomNumber +
+//                                    ", Order coords: FROM X " + fromCoordinates.getX() +
+//                                    " Y " + fromCoordinates.getY() +
+//                                    " TO X " + toCoordinates.getX() +
+//                                    " Y " + toCoordinates.getY());
+//
+//                            // ...
 
                             if (actorInfo.getPrice() >= randomNumber) {
                                 actorInfosInRange.add(actorInfo);
+                                System.out.println(name + ": Courier name: " + actorInfo.getName() +
+                                        " Coordinates: X " + actorInfo.getCoordinates().getX() +
+                                        " Y " + actorInfo.getCoordinates().getY() +
+                                        ", Courier price: " + actorInfo.getPrice() +
+                                        ", Order number: " + randomNumber +
+                                        ", Order coords: FROM X " + fromCoordinates.getX() +
+                                        " Y " + fromCoordinates.getY() +
+                                        " TO X " + toCoordinates.getX() +
+                                        " Y " + toCoordinates.getY() +
+                                        ", Distance: " + actorInfo.getDistance()); // Include the distance in the print statement
                             }
                         }
                     }
@@ -77,8 +101,8 @@ class ActorA extends UntypedAbstractActor {
                         if (cheapestActor != null) {
                             System.out.println(name + ": Cheapest Courier: " + cheapestActor.getName() +
                                     ", Price: " + cheapestActor.getPrice() +
-                                    ", Coordinates: (" + cheapestActor.getCoordinates().getX() +
-                                    ", " + cheapestActor.getCoordinates().getY() + ")");
+                                    ", Coordinates: X " + cheapestActor.getCoordinates().getX() +
+                                    " Y " + cheapestActor.getCoordinates().getY());
                             coordinator.tell(cheapestActor, getSelf());  // Send the chosen ActorB to the Coordinator
                         }
                     } else {
