@@ -14,7 +14,7 @@ public class ActorB extends UntypedAbstractActor {
 
     @Override
     public void preStart() {
-        this.price = new java.util.Random().nextInt(100) + 100;
+        this.price = new java.util.Random().nextInt(100);
         this.name = getSelf().path().name();
     }
 
@@ -23,7 +23,7 @@ public class ActorB extends UntypedAbstractActor {
         if (message instanceof ActorBRequest) {
             ActorBRequest request = (ActorBRequest) message;
             if (request.getCommand().equals("GetInfo")) {
-                Coordinates courierCoordinates = request.getCourierCoordinates();
+                Coordinates courierCoordinates = coordinates;
                 Coordinates orderFromCoordinates = request.getOrderFromCoordinates();
                 Coordinates orderToCoordinates = request.getOrderToCoordinates();
 
@@ -37,13 +37,9 @@ public class ActorB extends UntypedAbstractActor {
 
                 int totalDistance = distanceFromTo + distanceToDestination;
 
-                System.out.println(name + ": Distance from " + courierCoordinates +
-                        " to " + orderFromCoordinates + ": " + distanceFromTo);
-                System.out.println(name + ": Distance from " + orderFromCoordinates +
-                        " to " + orderToCoordinates + ": " + distanceToDestination);
-                System.out.println(name + ": Total Distance: " + totalDistance);
+                System.out.println(name + ": Total Distance for  "+ request.getOrderName() + " is: " + totalDistance);
 
-                getSender().tell(new ActorInfo(name, price, coordinates, totalDistance), getSelf());
+                getSender().tell(new ActorInfo(name, price*totalDistance, coordinates, totalDistance), getSelf());
             } else {
                 unhandled(message);
             }
