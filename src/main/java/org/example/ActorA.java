@@ -18,10 +18,12 @@ class ActorA extends UntypedAbstractActor {
 
     private final ActorRef coordinator;
     private final String name;
+    private final Coordinates coordinates;
 
-    public ActorA(ActorRef coordinator, String name) {
+    public ActorA(ActorRef coordinator, String name, Coordinates coordinates) {
         this.coordinator = coordinator;
         this.name = name;
+        this.coordinates = coordinates;
     }
 
     @Override
@@ -55,9 +57,10 @@ class ActorA extends UntypedAbstractActor {
                     for (Object resp : responses) {
                         if (resp instanceof ActorInfo) {
                             ActorInfo actorInfo = (ActorInfo) resp;
-                            System.out.println(name + ": ActorB name: " + actorInfo.getName() +
+                            System.out.println(name + ": ActorB name: " + actorInfo.getName() + " Coordinates: (" + actorInfo.getCoordinates().getX() +
+                                            ", " + actorInfo.getCoordinates().getY() + ")" +
                                     ", ActorB price: " + actorInfo.getPrice() +
-                                    ", ActorA number: " + randomNumber);
+                                    ", ActorA number: " + randomNumber + "ActorA coords: " + coordinates.getX()+":"+coordinates.getY());
 
                             if (actorInfo.getPrice() >= randomNumber) {
                                 actorInfosInRange.add(actorInfo);
@@ -73,7 +76,9 @@ class ActorA extends UntypedAbstractActor {
 
                         if (cheapestActor != null) {
                             System.out.println(name + ": Cheapest ActorB: " + cheapestActor.getName() +
-                                    ", Price: " + cheapestActor.getPrice());
+                                    ", Price: " + cheapestActor.getPrice() +
+                                    ", Coordinates: (" + cheapestActor.getCoordinates().getX() +
+                                    ", " + cheapestActor.getCoordinates().getY() + ")");
                             coordinator.tell(cheapestActor, getSelf());  // Send the chosen ActorB to the Coordinator
                         }
                     } else {
