@@ -45,7 +45,7 @@ public class ActorA extends UntypedAbstractActor {
             List<Future<Object>> futures = new ArrayList<>();
 
             // Ask all ActorB instances for their prices and names
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 4; i++) {
                 //Coordinates courierCoordinates = new Coordinates(5,0);
                 ActorBRequest request = new ActorBRequest("GetInfo", fromCoordinates, toCoordinates , name , weight);
                 Future<Object> future = Patterns.ask(

@@ -17,7 +17,7 @@ class CoordinatorActor extends UntypedAbstractActor {
             allResponses.add(response);
 
             // Check if responses from all ActorA instances have been received
-            if (allResponses.size() == 3 /* total number of ActorA instances */) {
+            if (allResponses.size() == 4 /* total number of ActorA instances */) {
                 // Process all responses here
                 for (ActorInfo actorInfo : allResponses) {
                     System.out.println("Coordinator received: " +

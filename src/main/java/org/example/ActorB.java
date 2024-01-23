@@ -39,22 +39,26 @@ public class ActorB extends UntypedAbstractActor {
                 Coordinates orderFromCoordinates = request.getOrderFromCoordinates();
                 Coordinates orderToCoordinates = request.getOrderToCoordinates();
 
-                int distanceFromTo = calculateDistance(
-                        courierCoordinates.getX(), courierCoordinates.getY(),
-                        orderFromCoordinates.getX(), orderFromCoordinates.getY());
+                List<AddOrderMessage> tempOrderSequence = new ArrayList<>(orderSequence);
+                AddOrderMessage tempOrderMessage = new AddOrderMessage(request.getOrderName(), orderFromCoordinates ,orderToCoordinates , request.getWeight());
+                int totalDistance = optimizeOrderSequenceAndTellDistance(tempOrderSequence,tempOrderMessage);
 
-                int distanceToDestination = calculateDistance(
-                        orderFromCoordinates.getX(), orderFromCoordinates.getY(),
-                        orderToCoordinates.getX(), orderToCoordinates.getY());
-
-                int totalDistance = distanceFromTo + distanceToDestination;
+//                int distanceFromTo = calculateDistance(
+//                        courierCoordinates,
+//                        orderFromCoordinates);
+//
+//                int distanceToDestination = calculateDistance(
+//                        orderFromCoordinates,
+//                        orderToCoordinates);
+//
+//                int totalDistance = distanceFromTo + distanceToDestination;
 
                 System.out.println(name + ": Total Distance for  "+ request.getOrderName() + " is: " + totalDistance);
                 int weightWithNewOrder =  weightLeft-request.getWeight();
                 if (weightWithNewOrder>0) {
-                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, true, request.getOrderName()), getSelf());
+                    getSender().tell(new ActorInfo(name, price*totalDistance , coordinates, totalDistance, maxWeight, weightWithNewOrder, true, request.getOrderName()), getSelf());
                 }else {
-                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, false, request.getOrderName()), getSelf());
+                    getSender().tell(new ActorInfo(name, price*totalDistance , coordinates, totalDistance, maxWeight, weightWithNewOrder, false, request.getOrderName()), getSelf());
                 }
             } else {
                 unhandled(message);
@@ -70,8 +74,46 @@ public class ActorB extends UntypedAbstractActor {
         }
     }
 
+    private int optimizeOrderSequenceAndTellDistance(List<AddOrderMessage> tmpOrderSequence, AddOrderMessage tempOrderMessage) {
+        tmpOrderSequence.add(tempOrderMessage);
+        if (tmpOrderSequence.size() > 1) {
+            List<Coordinates> optimizedPath = new ArrayList<>(tmpOrderSequence.size() + 1);
 
-    private int calculateDistance(int x1, int y1, int x2, int y2) {
-        return Math.abs(x2 - x1) + Math.abs(y2 - y1);
+            // Add the starting point (Courier's current coordinates)
+            optimizedPath.add(coordinates);
+
+            // Add the order coordinates to the optimized path
+            for (AddOrderMessage order : tmpOrderSequence) {
+                optimizedPath.add(order.getToCoordinates());
+            }
+
+            // Sort the optimized path based on the shortest distance
+            optimizedPath.sort((c1, c2) -> calculateDistance(coordinates, c1) - calculateDistance(coordinates, c2));
+
+            // Find the position of the new order in the optimized path
+            int newPosition = optimizedPath.indexOf(tempOrderMessage.getToCoordinates());
+
+            // Calculate the total distance only for the new order
+            int totalDistance;
+            if (newPosition > 0) {
+                totalDistance = calculateDistance(optimizedPath.get(newPosition - 1), tempOrderMessage.getToCoordinates());
+            } else {
+                // If newPosition is 0, it means the new order is at the starting position
+                totalDistance = calculateDistance(coordinates, tempOrderMessage.getToCoordinates());
+            }
+
+            // Calculate the total price for the optimized path
+            return totalDistance;
+
+            /*System.out.println(name + ": Optimized path: " + optimizedPath +
+                    ", Total Distance: " + totalDistance +
+                    ", Total Price: " + totalPrice);*/
+        }
+        return calculateDistance(coordinates, tempOrderMessage.getToCoordinates());
+    }
+
+
+    private int calculateDistance(Coordinates c1, Coordinates c2) {
+        return Math.abs(c2.getX() - c1.getX()) + Math.abs(c2.getY() - c1.getY());
     }
 }
