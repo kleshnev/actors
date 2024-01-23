@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 public class ActorInfo {
     private final String name;
     private final String orderName;
@@ -12,6 +14,8 @@ public class ActorInfo {
     private final int weightLeft;
 
     private boolean accept;
+
+
 
     public ActorInfo(String name, int price, Coordinates coordinates, int distance, int maxWeight , int weightLeft , boolean accept, String orderName) {
         this.name = name;

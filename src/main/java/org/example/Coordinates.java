@@ -17,5 +17,10 @@ public class Coordinates {
     public int getY() {
         return y;
     }
+
+    @Override
+    public String toString(){
+        return "X:"+getX()+" Y:"+getY();
+    }
 }
 

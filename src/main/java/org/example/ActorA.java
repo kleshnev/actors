@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ActorA extends UntypedAbstractActor {
@@ -23,13 +24,17 @@ public class ActorA extends UntypedAbstractActor {
 
     private final int price;
 
-    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight , int price) {
+    private final int courierCount;  // New parameter
+
+
+    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight , int price, int courierCount) {
         this.coordinator = coordinator;
         this.name = name;
         this.fromCoordinates = fromCoordinates;
         this.toCoordinates = toCoordinates;
         this.weight = weight;
         this.price = price;
+        this.courierCount = courierCount;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class ActorA extends UntypedAbstractActor {
             List<Future<Object>> futures = new ArrayList<>();
 
             // Ask all ActorB instances for their prices and names
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 1; i <= courierCount; i++) {
                 //Coordinates courierCoordinates = new Coordinates(5,0);
                 ActorBRequest request = new ActorBRequest("GetInfo", fromCoordinates, toCoordinates , name , weight);
                 Future<Object> future = Patterns.ask(

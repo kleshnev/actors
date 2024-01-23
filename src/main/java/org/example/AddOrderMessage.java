@@ -20,6 +20,12 @@ public class AddOrderMessage {
         toCoordinates = to;
         this.weight = weight;
     }
-
+    @Override
+    public String toString() {
+        return actorAName + " from=" + fromCoordinates.toString() +
+                ", to=" + toCoordinates.toString() +
+                ", weight=" + weight +
+                '}';
+    }
 }
 
