@@ -2,6 +2,8 @@ package org.example;
 
 public class ActorInfo {
     private final String name;
+    private final String orderName;
+
     private final int price;
     private final Coordinates coordinates;
     private final int distance;
@@ -11,7 +13,7 @@ public class ActorInfo {
 
     private boolean accept;
 
-    public ActorInfo(String name, int price, Coordinates coordinates, int distance, int maxWeight , int weightLeft , boolean accept) {
+    public ActorInfo(String name, int price, Coordinates coordinates, int distance, int maxWeight , int weightLeft , boolean accept, String orderName) {
         this.name = name;
         this.price = price;
         this.coordinates = coordinates;
@@ -19,6 +21,11 @@ public class ActorInfo {
         this.maxWeight = maxWeight;
         this.weightLeft = weightLeft;
         this.accept = accept;
+        this.orderName = orderName;
+    }
+
+    public String getOrderName() {
+        return orderName;
     }
 
     public boolean isAccept() {

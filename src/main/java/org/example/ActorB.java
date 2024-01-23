@@ -2,6 +2,9 @@ package org.example;
 
 import akka.actor.UntypedAbstractActor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActorB extends UntypedAbstractActor {
 
     private int price;
@@ -11,6 +14,8 @@ public class ActorB extends UntypedAbstractActor {
     private int maxWeight;
 
     private int weightLeft;
+
+    private List<ActorBRequest> orderSequence = new ArrayList<>();
 
     public ActorB(Coordinates coordinates, int maxWeight) {
         this.coordinates = coordinates;
@@ -47,15 +52,22 @@ public class ActorB extends UntypedAbstractActor {
                 System.out.println(name + ": Total Distance for  "+ request.getOrderName() + " is: " + totalDistance);
                 int weightWithNewOrder =  weightLeft-request.getWeight();
                 if (weightWithNewOrder>0) {
-                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, true), getSelf());
+                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, true, request.getOrderName()), getSelf());
                 }else {
-                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, false), getSelf());
+                    getSender().tell(new ActorInfo(name, price * totalDistance, coordinates, totalDistance, maxWeight, weightWithNewOrder, false, request.getOrderName()), getSelf());
                 }
             } else {
                 unhandled(message);
             }
-        } else {
-            unhandled(message);
+        } else if (message instanceof AddOrderMessage) {
+            AddOrderMessage addOrderMessage = (AddOrderMessage) message;
+            String actorAName = addOrderMessage.getActorAName();
+            String orderName = addOrderMessage.getOrderName();
+
+            // Add the order to the list
+            orderSequence.add(new ActorBRequest("AddOrder", coordinates, null, orderName, 0));
+
+            System.out.println(name + ": Order " + orderName + " added to the list by " + actorAName);
         }
     }
 

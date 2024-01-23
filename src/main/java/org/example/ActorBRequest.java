@@ -5,7 +5,6 @@ public class ActorBRequest {
     private  Coordinates courierCoordinates;
     private final Coordinates orderFromCoordinates;
     private final Coordinates orderToCoordinates;
-
     private final String orderName;
     private final int weight;
 

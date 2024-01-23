@@ -19,7 +19,6 @@ public class ActorA extends UntypedAbstractActor {
     private final String name;
     private final Coordinates fromCoordinates;
     private final Coordinates toCoordinates;
-
     private final int weight;
 
     public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight) {
@@ -97,6 +96,8 @@ public class ActorA extends UntypedAbstractActor {
                                     ", Coordinates: X " + cheapestActor.getCoordinates().getX() +
                                     " Y " + cheapestActor.getCoordinates().getY());
                             coordinator.tell(cheapestActor, getSelf());  // Send the chosen ActorB to the Coordinator
+                            getContext().actorSelection("/user/" + cheapestActor.getName()).tell(new AddOrderMessage(cheapestActor.getName(), name), getSelf());
+
                         }
                     } else {
                         System.out.println(name + ": No Courier within the specified price range.");
