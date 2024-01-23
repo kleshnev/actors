@@ -96,7 +96,7 @@ public class ActorA extends UntypedAbstractActor {
                                     ", Coordinates: X " + cheapestActor.getCoordinates().getX() +
                                     " Y " + cheapestActor.getCoordinates().getY());
                             coordinator.tell(cheapestActor, getSelf());  // Send the chosen ActorB to the Coordinator
-                            getContext().actorSelection("/user/" + cheapestActor.getName()).tell(new AddOrderMessage(cheapestActor.getName(), name), getSelf());
+                            getContext().actorSelection("/user/" + cheapestActor.getName()).tell(new AddOrderMessage(name, fromCoordinates , toCoordinates, weight), getSelf());
 
                         }
                     } else {

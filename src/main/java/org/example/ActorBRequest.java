@@ -10,7 +10,6 @@ public class ActorBRequest {
 
     public ActorBRequest(String command, Coordinates orderFromCoordinates, Coordinates orderToCoordinates, String orderName, int weight) {
         this.command = command;
-        //this.courierCoordinates = courierCoordinates;
         this.orderFromCoordinates = orderFromCoordinates;
         this.orderToCoordinates = orderToCoordinates;
         this.orderName = orderName;

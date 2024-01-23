@@ -15,7 +15,7 @@ public class ActorB extends UntypedAbstractActor {
 
     private int weightLeft;
 
-    private List<ActorBRequest> orderSequence = new ArrayList<>();
+    private List<AddOrderMessage> orderSequence = new ArrayList<>();
 
     public ActorB(Coordinates coordinates, int maxWeight) {
         this.coordinates = coordinates;
@@ -62,12 +62,11 @@ public class ActorB extends UntypedAbstractActor {
         } else if (message instanceof AddOrderMessage) {
             AddOrderMessage addOrderMessage = (AddOrderMessage) message;
             String actorAName = addOrderMessage.getActorAName();
-            String orderName = addOrderMessage.getOrderName();
 
             // Add the order to the list
-            orderSequence.add(new ActorBRequest("AddOrder", coordinates, null, orderName, 0));
+            orderSequence.add(addOrderMessage);
 
-            System.out.println(name + ": Order " + orderName + " added to the list by " + actorAName);
+            System.out.println(name + ": Order " + actorAName + " added to the list of " + name);
         }
     }
 
