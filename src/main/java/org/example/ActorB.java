@@ -27,7 +27,7 @@ public class ActorB extends UntypedAbstractActor {
     public void preStart() {
         this.price = new java.util.Random().nextInt(100);
         this.name = getSelf().path().name();
-        System.out.println("Cour " + name + " price " + price + " maxWeighjt" + maxWeight +" coords "+ coordinates);
+        System.out.println("Cour " + name + " price " + price + " maxWeight " + maxWeight +" coords "+ coordinates);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ActorB extends UntypedAbstractActor {
         } else if (message instanceof AddOrderMessage) {
             AddOrderMessage addOrderMessage = (AddOrderMessage) message;
             String actorAName = addOrderMessage.getActorAName();
-
+            weightLeft-=addOrderMessage.getWeight();
             // Add the order to the list
             orderSequence.add(addOrderMessage);
 

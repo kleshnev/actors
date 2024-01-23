@@ -21,12 +21,15 @@ public class ActorA extends UntypedAbstractActor {
     private final Coordinates toCoordinates;
     private final int weight;
 
-    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight) {
+    private final int price;
+
+    public ActorA(ActorRef coordinator, String name, Coordinates fromCoordinates, Coordinates toCoordinates, int weight , int price) {
         this.coordinator = coordinator;
         this.name = name;
         this.fromCoordinates = fromCoordinates;
         this.toCoordinates = toCoordinates;
         this.weight = weight;
+        this.price = price;
     }
 
     @Override
